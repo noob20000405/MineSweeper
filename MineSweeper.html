@@ -16,16 +16,16 @@
         <template v-for="(n, index) in arr">
             <div class="mine" :key="index" @click="sweep(index)">
                 <template v-if="n == 0">
-                    <p class="initial case"></p>
+                    <p class="initial case">{{ arrInfo[index] }}</p>
                 </template>
                 <template v-else-if="n == 1">
                     <p class="swept case">{{ arrInfo[index] }}</p>
                 </template>
                 <template v-else-if="n == 2">
-                    <p class="mine-hid case"></p>
+                    <p class="mine-hid case">{{ arrInfo[index] }}</p>
                 </template>
                 <template v-else>
-                    <p class="mine-explosive case"></p>
+                    <p class="mine-explosive case">{{ arrInfo[index] }}</p>
                 </template>
             </div>
         </template>
@@ -43,8 +43,8 @@
     }
     .mine {
         color:black;
-        width:90px;
-        height:90px;
+        width:99px;
+        height:99px;
         text-align:center;
     }
     .initial, .mine-hid {
@@ -75,12 +75,13 @@
     var vm = new Vue({
         el:'#game',
         data: {
-            size: 5,
+            size: 3,
             numsBlock: '',
             arr: [],
             numsMine: 3,
             arrMines: [],
             arrInfo: [],
+            restCase: '',
         },
         mounted: function(){
             /* initiate the box */
@@ -88,7 +89,6 @@
             console.log(this.numsBlock);
             for(i=0;i<this.numsBlock;i++) {
                 this.arr.push(0);
-                this.arrInfo.push(0);
             }
             console.log(this.arr.length);
             /* put some mines */
@@ -97,8 +97,16 @@
                 indexMine = Math.floor(Math.random()*this.numsBlock);
                 this.$set(this.arr, indexMine, 2);
             }
+            this.restCase = this.numsBlock - this.numsMine;
+            /* count around */
+            for(j=0;j<this.numsBlock;j++) {
+                this.arrInfo.push(this.countAround(j));
+            }
         },
         methods: {
+            spread(index) {
+
+            },
             sweep(index) {
                 if(this.arr[index] === 2) {
                     this.$set(this.arr, index, 4);
@@ -110,10 +118,18 @@
                     });
                 } else {
                     this.$set(this.arr, index, 1);
+                    this.restCase--;
                 }
-                this.arrInfo[index] = this.countAround(index);
+                if(this.restCase === 0) {
+                    this.$alert('title', 'you win', {
+                        confirmButtonText: 'confirm',
+                        callback: action => {
+                            location.reload();
+                        }
+                    });
+                }
                 console.log(this.arr[index]);
-                console.log("mines = " + this.countAround(index));
+                console.log("mines = " + this.arrInfo[index]);
             },
             countAround(index) {
                 var numsMineAro = 0;
