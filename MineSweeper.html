@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+     <!-- import Vue before Element -->
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <!-- import JavaScript -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 </head>
 <body>
 <div id="game">
@@ -11,16 +16,16 @@
         <template v-for="(n, index) in arr">
             <div class="mine" :key="index" @click="sweep(index)">
                 <template v-if="n == 0">
-                    <p class="initial">{{ n }}  {{ index }}</p>
+                    <p class="initial case"></p>
                 </template>
                 <template v-else-if="n == 1">
-                    <p class="swept">{{ n }}  {{ index }}</p>
+                    <p class="swept case">{{ arrInfo[index] }}</p>
                 </template>
                 <template v-else-if="n == 2">
-                    <p class="mine-hid">{{ n }}  {{ index }}</p>
+                    <p class="mine-hid case"></p>
                 </template>
                 <template v-else>
-                    <p class="mine-explosive">{{ n }}  {{ index }}</p>
+                    <p class="mine-explosive case"></p>
                 </template>
             </div>
         </template>
@@ -51,14 +56,16 @@
     .mine-explosive {
         background-color:red;
     }
-    p {
+    .case {
         height:100%;
         margin-top:0;
         border-radius:4px;
         box-shadow:0 0 5px 2px rgb(250, 250, 250);
         transition: 0.4s;
+        color:rgb(200, 200, 200);
+        font-size:2em;
     }
-    p:hover {
+    .case:hover {
         transition: 0.4s;
         box-shadow:inset 0 0 5px 2px rgb(250, 250, 250);
     }
@@ -68,11 +75,12 @@
     var vm = new Vue({
         el:'#game',
         data: {
-            size: 3,
+            size: 5,
             numsBlock: '',
             arr: [],
             numsMine: 3,
             arrMines: [],
+            arrInfo: [],
         },
         mounted: function(){
             /* initiate the box */
@@ -80,6 +88,7 @@
             console.log(this.numsBlock);
             for(i=0;i<this.numsBlock;i++) {
                 this.arr.push(0);
+                this.arrInfo.push(0);
             }
             console.log(this.arr.length);
             /* put some mines */
@@ -93,14 +102,18 @@
             sweep(index) {
                 if(this.arr[index] === 2) {
                     this.$set(this.arr, index, 4);
-                    alert('886');
-                    location.reload();
+                    this.$alert('886', 'massage', {
+                        confirmButtonText: 'confirm',
+                        callback: action => {
+                            location.reload();
+                        }
+                    });
                 } else {
                     this.$set(this.arr, index, 1);
                 }
+                this.arrInfo[index] = this.countAround(index);
                 console.log(this.arr[index]);
                 console.log("mines = " + this.countAround(index));
-                alert(this.countAround(index) + ' mines around.');
             },
             countAround(index) {
                 var numsMineAro = 0;
