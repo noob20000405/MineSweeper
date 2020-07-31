@@ -12,24 +12,30 @@
 </head>
 <body>
 <div id="game">
-    <div class="container" :style="'width:' + size*100 + 'px;height:' + size*100 + 'px;'">
-        <template v-for="(n, index) in arr">
-            <div class="mine" :key="index" @click="sweep(index)">
-                <template v-if="n == 0">
-                    <p class="initial case">{{ arrInfo[index] }}</p>
-                </template>
-                <template v-else-if="n == 1">
-                    <p class="swept case">{{ arrInfo[index] }}</p>
-                </template>
-                <template v-else-if="n == 2">
-                    <p class="mine-hid case">{{ arrInfo[index] }}</p>
-                </template>
-                <template v-else>
-                    <p class="mine-explosive case">{{ arrInfo[index] }}</p>
-                </template>
-            </div>
-        </template>
-    </div>
+    <template v-if="!(size && numsMine)">
+        <input v-model="size">
+        <input v-model="numsMine">
+    </template>
+    <template v-if="true">
+        <div class="container" :style="'width:' + size*100 + 'px;height:' + size*100 + 'px;'">
+            <template v-for="(n, index) in arr">
+                <div class="mine" :key="index" @click="sweep(index)">
+                    <template v-if="n == 0">
+                        <p class="initial case"></p>
+                    </template>
+                    <template v-else-if="n == 1">
+                        <p class="swept case">{{ arrInfo[index] }}</p>
+                    </template>
+                    <template v-else-if="n == 2">
+                        <p class="mine-hid case"></p>
+                    </template>
+                    <template v-else>
+                        <p class="mine-explosive case"></p>
+                    </template>
+                </div>
+            </template>
+        </div>
+    </template>
 </div>
 </body>
 </html>
@@ -75,7 +81,7 @@
     var vm = new Vue({
         el:'#game',
         data: {
-            size: 3,
+            size: 5,
             numsBlock: '',
             arr: [],
             numsMine: 3,
@@ -190,6 +196,12 @@
                     if(this.arr[index+1] === 2) {
                         numsMineAro++;
                     }
+                    if(this.arr[index+this.size-1] === 2) {
+                        numsMineAro++;
+                    }
+                    if(this.arr[index+this.size+1] === 2) {
+                        numsMineAro++;
+                    }
                     return numsMineAro;
                 }
 /* bottom side */
@@ -201,6 +213,12 @@
                         numsMineAro++;
                     }
                     if(this.arr[index+1] === 2) {
+                        numsMineAro++;
+                    }
+                    if(this.arr[index-this.size-1] === 2) {
+                        numsMineAro++;
+                    }
+                    if(this.arr[index-this.size+1] === 2) {
                         numsMineAro++;
                     }
                     return numsMineAro;
@@ -216,6 +234,12 @@
                     if(this.arr[index+this.size] === 2) {
                         numsMineAro++;
                     }
+                    if(this.arr[index-this.size+1] === 2) {
+                        numsMineAro++;
+                    }
+                    if(this.arr[index+this.size+1] === 2) {
+                        numsMineAro++;
+                    }
                     return numsMineAro;
                 }
 /* right side */
@@ -227,6 +251,12 @@
                         numsMineAro++;
                     }
                     if(this.arr[index+this.size] === 2) {
+                        numsMineAro++;
+                    }
+                    if(this.arr[index-this.size-1] === 2) {
+                        numsMineAro++;
+                    }
+                    if(this.arr[index+this.size-1] === 2) {
                         numsMineAro++;
                     }
                     return numsMineAro;
